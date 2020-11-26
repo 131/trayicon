@@ -6,4 +6,6 @@
 /src
 /*.cmd
 /examples
-.*
+.eslint*
+.git*
+.travis*

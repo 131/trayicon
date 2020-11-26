@@ -193,7 +193,7 @@ namespace TrayIcon
                     if (pos != -1 && pos < bytesRead)
                     {
                         //end separator, full payload availabled
-                        state.sb.Append(Encoding.ASCII.GetString(state.buffer, start, pos - start));
+                        state.sb.Append(Encoding.UTF8.GetString(state.buffer, start, pos - start));
                         string msg = state.sb.ToString();
                         state.sb = new StringBuilder();
                         //send message to UI deletage
@@ -205,7 +205,7 @@ namespace TrayIcon
                         }
                         start = pos + 1;
                     } else {
-                        state.sb.Append(Encoding.ASCII.GetString(state.buffer, start, bytesRead - start));
+                        state.sb.Append(Encoding.UTF8.GetString(state.buffer, start, bytesRead - start));
                         break;
                     }
                 } while (true);
@@ -272,19 +272,27 @@ namespace TrayIcon
 
             item_strip.Enabled = !toBool(item_node.GetAttribute("disabled"));
 
+
             item_strip.Text = item_node.Attributes["label"].Value;
             if (item_node.ChildNodes.Count > 0)
                 item_strip.DropDownItems.AddRange(BuildStrip(item_node));
+
+            if(toBool(item_node.GetAttribute("bold")))
+              item_strip.Font = new Font(item_strip.Font, FontStyle.Bold);
+
 
             item_strip.Tag = item_node.GetAttribute("uid");
             item_strip.Click += Item_strip_Click;
             return item_strip;
         }
 
+
+
         private static void Item_strip_Click(object sender, EventArgs e)
         {
             Send(((ToolStripItem) sender).Tag.ToString() );
         }
+
 
         private static ToolStripItem[] BuildStrip(XmlNode root)
         {

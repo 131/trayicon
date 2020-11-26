@@ -43,7 +43,7 @@ Display a notification balloon.
 ## (void) tray.setMenu(...items)
 Set the systray menu.
 
-## (Item) tray.item("foo", { ?checked : boolean, ?disabled : boolean, ?action : `function`})
+## (Item) tray.item("foo", { ?checked : boolean, ?disabled : boolean, ?bold : boolean, ?action : `function`})
 Create a menu item. If defined, the `action` callback is triggered when the item is selected. 
 
 ## (void) parentItem.add(...childrenItems)

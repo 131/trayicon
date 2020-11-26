@@ -199,6 +199,8 @@ class Tray extends EventEmitter {
 
 }
 
+const ITEM_OPTIONS = ["disabled", "checked", "bold", "type"];
+
 class Item {
 
   constructor(label, props = {}) {
@@ -210,12 +212,12 @@ class Item {
     this.uid = uuid();
 
     this.action   = props.action || (() => {});
-    this.type     = props.type; //might be undefined
-    this.checked  = props.checked; //might be undefined
-    this.disabled = props.disabled; //might be undefined
     this.label    = label;
-
     this.items = [];
+
+    for(let opt of ITEM_OPTIONS)
+      this[opt] = props[opt];
+
   }
 
   add(...items) {
@@ -223,7 +225,7 @@ class Item {
   }
 
   asXML() {
-    let args = ["label", "disabled", "checked", "type", "uid"];
+    let args = ["label", "uid", ...ITEM_OPTIONS];
     let body = `<item ${attrs(this, args)}`;
 
     if(this.items.length) {
