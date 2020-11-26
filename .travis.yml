@@ -1,0 +1,20 @@
+git:
+  autocrlf: false
+jobs:
+  include:
+  - os: windows
+    language: node_js
+    node_js: 8
+    install:
+    - powershell Install-WindowsFeature Net-Framework-Core
+    - export PATH=$PATH:";C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319"
+    script:
+    - cmd.exe "/c build.cmd"
+    deploy:
+      skip_cleanup: true
+      verbose: true
+      provider: npm
+      email: 131.frodon@cloudyks.org
+      api_key: $NPM_TOKEN
+      on:
+        tags: true
