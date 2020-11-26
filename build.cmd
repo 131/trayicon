@@ -1,4 +1,4 @@
-@set win_dst=rsrcs/trayicon.exe
+@set win_dst=rsrcs\trayicon.exe
 
 del %win_dst%
 
