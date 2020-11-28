@@ -20,7 +20,7 @@ function attrs(dict, keys) {
 
 
 function escapeXML(str) {
-  str = str
+  str = String(str)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')

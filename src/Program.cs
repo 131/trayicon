@@ -277,8 +277,12 @@ namespace TrayIcon
             if (item_node.ChildNodes.Count > 0)
                 item_strip.DropDownItems.AddRange(BuildStrip(item_node));
 
+            var style = FontStyle.Regular;
+
             if(toBool(item_node.GetAttribute("bold")))
-              item_strip.Font = new Font(item_strip.Font, FontStyle.Bold);
+              style = FontStyle.Bold;
+ 
+            item_strip.Font = new Font(item_strip.Font, style);
 
 
             item_strip.Tag = item_node.GetAttribute("uid");

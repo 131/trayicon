@@ -115,7 +115,8 @@ class Tray extends EventEmitter {
   }
 
   setAction(action) {
-    this.register(this.uid, {action});
+    if(action)
+      this.register(this.uid, {action});
   }
 
 
@@ -133,14 +134,13 @@ class Tray extends EventEmitter {
     const uid = uuid();
     let args = {
       uid,
-      title,
+      title : title || "-",
       timeout : 5000,
       style : 'info', //warn, error
     };
-
     let payload = XML_HEAD;
     payload += `<notify ${attrs(args)}>\n`;
-    payload += `<msg>${escapeXML(msg)}</msg>\n`;
+    payload += `<msg>${escapeXML(msg || "-")}</msg>\n`;
     payload += `</notify>`;
 
     this.register(uid, {action});
