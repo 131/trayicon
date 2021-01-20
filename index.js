@@ -68,7 +68,10 @@ class Tray extends EventEmitter {
     let defered = defer();
     let server = net.createServer(defered.resolve);
 
-    port = await new Promise(resolve => server.listen(port, () => resolve(server.address().port)));
+    port = await new Promise(resolve =>
+      server.listen(port, '127.0.0.1', () => resolve(server.address().port))
+    );
+
 
     logger.info("Server listening on port", port);
 
