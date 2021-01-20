@@ -1,3 +1,5 @@
+@set PATH=%PATH%;C:\Windows\Microsoft.NET\Framework\v4.0.30319
+
 @set win_dst=rsrcs\trayicon.exe
 
 del %win_dst%
