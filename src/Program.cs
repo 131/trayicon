@@ -116,7 +116,8 @@ namespace TrayIcon
 
             using (var ms = new MemoryStream(icon_body))
             {
-                Program.trayIcon.Icon = new Icon(ms);
+                Bitmap image = (Bitmap) Image.FromStream(ms,true);
+                Program.trayIcon.Icon = Icon.FromHandle(image.GetHicon());
             }
         }
 

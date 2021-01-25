@@ -76,14 +76,16 @@ class Tray extends EventEmitter {
     logger.info("Server listening on port", port);
 
     if(!this.debug) {
+      logger.info("Spawning", TRAYAPP_PATH, [port]);
       let child = spawn(TRAYAPP_PATH, [port]);
       //child.stdout.pipe(process.stdout);
       //child.stderr.pipe(process.stderr);
 
       child.on('exit', (code) => {
-        if(code !== 0)
+        if(code !== 0) {
+          logger.error("Error on %s (exit %d)", TRAYAPP_PATH, code);
           this.emit('error', `Invalid exit code ${code}`);
-
+        }
         if(this.client)
           this.client.end();
         server.close();
