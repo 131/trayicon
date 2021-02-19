@@ -11,6 +11,7 @@
     "eslint": "eslint .",
     "version": "sed -Ei -e \"s/(AssemblyVersion|AssemblyFileVersion)\\(.*?\\)/\\1(\\\"${npm_package_version}.0\\\")/\" src/Properties/AssemblyInfo.cs && git add -A src/Properties/AssemblyInfo.cs",
     "checkall": "npm run eslint",
+    "test": "npm run eslint",
     "mocha": "node node_modules/mocha/bin/_mocha -b",
     "cover": "nyc --temp-directory coverage/.nyc_output --reporter text-summary --reporter html --reporter lcov  mocha",
     "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"

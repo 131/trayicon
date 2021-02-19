@@ -58,3 +58,5 @@ Create an item of type "separator"
 # Credits 
 * [131](https://github.com/131)
 * [murrayju](https://github.com/murrayju/CreateProcessAsUser)
+* Code signing, courtesy of IVS Group.
+

@@ -8,8 +8,9 @@ jobs:
     install:
     - powershell Install-WindowsFeature Net-Framework-Core
     - export PATH=$PATH:";C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319"
+    - export MSYS2_ARG_CONV_EXCL="*"
     script:
-    - cmd.exe "/c build.cmd"
+    - ./build --build --sign --test
     deploy:
       skip_cleanup: true
       verbose: true

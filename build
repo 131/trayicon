@@ -1,0 +1,93 @@
+#!/bin/bash
+
+set -eu
+
+# read secrets from env file, if available
+
+if [[ -f .env ]] ; then
+  export $(cat .env | xargs)
+fi
+
+if which wslpath; then
+  PATH=$PATH:$(wslpath 'C:\Windows\Microsoft.NET\Framework\v4.0.30319')
+fi
+
+win_dst=rsrcs/trayicon.exe
+
+
+
+dobuild=
+dosign=
+dotest=
+
+while test $# -gt 0
+do
+  case "$1" in
+    --build) dobuild=true
+        ;;
+    --sign) dosign=true
+        ;;
+    --test) dotest=true
+        ;;
+    --*) echo "bad option $1"
+        ;;
+    *) echo "argument $1"
+        ;;
+  esac
+  shift
+done
+
+sign() {
+  FILE_IN="$1"
+  FILE_OUT="$FILE_IN.signed"
+
+  echo "Signing $FILE_IN"
+
+  args=(-s -X PUT --data-binary @-)
+  args=("${args[@]}"  -D -)
+  args=("${args[@]}" -o $FILE_OUT)
+
+  response=$(cat $FILE_IN | curl "${args[@]}" $SIGNING_SERVER | sed 's/\r$//' )
+
+  if echo "$response" | grep -qe "HTTP/1.. 200 " ; then
+    mv $FILE_OUT $FILE_IN
+    echo "$FILE_IN successfully signed."
+  else
+    echo  "Could not sign $FILE_IN"
+    exit 1
+  fi
+}
+
+
+if [[ ! -z "$dobuild" ]] ; then
+  echo "Running application build"
+  rm -f $win_dst
+
+  v2=C:\\Windows\\Microsoft.NET\\Framework\\v2.0.50727
+  args=(/noconfig /nowarn:1701,1702 /nostdlib+ /errorreport:prompt /warn:0 /errorendlocation /preferreduilang:en-US /highentropyva-)
+  args=("${args[@]}" /reference:$v2\\mscorlib.dll /reference:$v2\\System.dll /reference:$v2\\System.Xml.dll /reference:$v2\\System.Drawing.dll /reference:$v2\\System.Windows.Forms.dll)
+  args=("${args[@]}" /filealign:512 /utf8output)
+
+  files=(src\\Program.cs src\\Properties\\AssemblyInfo.cs src\\ProcessExtensions.cs src\\Utils\\Kernel32.cs)
+
+  csc.exe "${args[@]}" /platform:x86 /out:$win_dst  /target:winexe "${files[@]}"
+fi
+
+if [[ ! -z "$dosign" ]] ; then
+  if [[ -z "$SIGNING_SERVER" ]] ; then
+    echo "No signing server defined";
+    exit 1
+  fi
+
+  echo "Signing binaries"
+
+  sign $win_dst
+fi
+
+
+if [[ ! -z "$dotest" ]] ; then
+  echo "Running test suite"
+
+  npm install
+  cmd.exe /c npm test
+fi

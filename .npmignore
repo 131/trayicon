@@ -4,8 +4,9 @@
 /test
 /disc
 /src
-/*.cmd
+/build
 /examples
+/.env
 .eslint*
 .git*
 .travis*
