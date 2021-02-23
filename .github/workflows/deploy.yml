@@ -1,0 +1,30 @@
+name: deploy
+on:
+  push:
+    tags:
+      - '*'
+jobs:
+  build:
+    runs-on: windows-2019
+    environment: production
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+    - uses: msys2/setup-msys2@v2
+      with:
+        path-type: inherit
+        install: rsync
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '8.x'
+        registry-url: 'https://registry.npmjs.org'
+    - run: powershell Install-WindowsFeature Net-Framework-Core
+    - run: ./build --build --sign --test
+      env:
+        MSYS2_ARG_CONV_EXCL: "*"
+        SIGNING_SERVER: ${{ secrets.SIGNING_SERVER }}
+    - run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -10,7 +10,10 @@ fi
 
 if which wslpath; then
   PATH=$PATH:$(wslpath 'C:\Windows\Microsoft.NET\Framework\v4.0.30319')
+elif which cygpath; then
+  PATH=$PATH:$(cygpath 'C:\Windows\Microsoft.NET\Framework\v4.0.30319')
 fi
+
 
 win_dst=rsrcs/trayicon.exe
 
@@ -88,6 +91,6 @@ fi
 if [[ ! -z "$dotest" ]] ; then
   echo "Running test suite"
 
-  npm install
+  cmd.exe /c npm install
   cmd.exe /c npm test
 fi
