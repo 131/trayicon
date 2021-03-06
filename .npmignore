@@ -6,7 +6,4 @@
 /src
 /build
 /examples
-/.env
-.eslint*
-.git*
-.travis*
+/.*
