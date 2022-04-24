@@ -2,6 +2,7 @@
 
 const path = require('path');
 const fs  = require('fs');
+const os = require('os');
 const net = require('net');
 const EventEmitter = require('events');
 
@@ -9,7 +10,7 @@ const debug = require('debug');
 
 const {spawn} = require('child_process');
 
-const {escapeXML, attrs, defer, uuid} = require('./utils');
+const {escapeXML, attrs, defer, uuid, md5} = require('./utils');
 
 const DEFAULT_ICON_PATH = path.resolve(__dirname, 'rsrcs', 'default.ico');
 const TRAYAPP_PATH      = path.resolve(__dirname, 'rsrcs', 'trayicon.exe');
@@ -43,18 +44,45 @@ class Tray extends EventEmitter {
     this.client = null;
 
     this.connected = new Promise(resolve => this.on("connected", resolve));
+    
+    this._useTempDir = opts.useTempDir;
+    this.trayAppPath = TRAYAPP_PATH;
   }
 
-  static create(opts, ready) {
+  static async create(opts, ready) {
     if(typeof opts == "function")
       (ready = opts), (opts = {});
 
-    var tray = new Tray(opts);
+    let tray = new Tray(opts);
+
+    if(tray._useTempDir) {
+      await new Promise((resolve, reject) => {
+        // Keep temp name stable so pinned tray icons stay pinned
+        let executableName = path.basename(process.execPath, '.exe');
+        let computedId = md5(executableName + opts.title);
+        let filename = `${executableName}-trayicon-${computedId}.exe`;
+        let tmppath = path.join(os.tmpdir(), filename);
+  
+        tray.trayAppPath = tmppath;
+  
+        if(fs.existsSync(tmppath)) {
+          resolve();
+        } else {
+          // `fs.copyFileSync` doesn't work with pkg
+          let rd = fs.createReadStream(TRAYAPP_PATH);
+          let wr = fs.createWriteStream(tmppath);
+          wr.on("error", reject);
+          wr.on("close", resolve);
+          rd.pipe(wr);
+        }
+      })
+    }
+
     tray._connect();
 
     if(ready)
       tray.on('connected', ready);
-    return tray.connected;
+    return await tray.connected;
   }
 
 
@@ -76,18 +104,20 @@ class Tray extends EventEmitter {
     logger.info("Server listening on port", port);
 
     if(!this.debug) {
-      logger.info("Spawning", TRAYAPP_PATH, [port]);
-      let child = spawn(TRAYAPP_PATH, [port]);
+      logger.info("Spawning", this.trayAppPath, [port]);
+      let child = spawn(this.trayAppPath, [port]);
       //child.stdout.pipe(process.stdout);
       //child.stderr.pipe(process.stderr);
 
       child.on('exit', (code) => {
         if(code !== 0) {
-          logger.error("Error on %s (exit %d)", TRAYAPP_PATH, code);
+          logger.error("Error on %s (exit %d)", this.trayAppPath, code);
           this.emit('error', `Invalid exit code ${code}`);
         }
         if(this.client)
           this.client.end();
+        if(this._useTempDir === "clean")
+          fs.unlinkSync(this.trayAppPath);
         server.close();
       });
     }
