@@ -13,8 +13,7 @@
     "checkall": "npm run eslint",
     "test": "npm run eslint",
     "mocha": "node node_modules/mocha/bin/_mocha -b",
-    "cover": "nyc --temp-directory coverage/.nyc_output --reporter text-summary --reporter html --reporter lcov  mocha",
-    "coveralls": "npm install coveralls && node ./node_modules/coveralls/bin/coveralls.js < ./coverage/lcov.info"
+    "cover": "nyc mocha"
   },
   "devDependencies": {
     "eslint-plugin-ivs": "^1.3.0",

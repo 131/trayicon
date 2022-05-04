@@ -25,30 +25,30 @@ Tray.create(function(tray) {
 
 # API
 
-## (Promise <Tray>) tray.create({icon, title, action, useTempDir} [, readyCb])
+## `(Promise <Tray>) tray.create({icon, title, action, useTempDir} [, readyCb])`
 Create a new Tray instance, return a promise / emit a callback when the trayicon is ready.
 If defined, `action` callback is triggered when double clicking the tray.
 Set `useTempDir` to `true` or `"clean"` to copy executable files to temporary directory (`clean` removes temp files on `tray.kill()`). Allows using the package with [pkg](https://www.npmjs.com/package/pkg).
 
-## (void) tray.setTitle(tray title)
+## `(void) tray.setTitle(tray title)`
 Set the systray title.
 
-## (void) tray.setIcon(binary icon buffer)
+## `(void) tray.setIcon(binary icon buffer)`
 Set the systray icon.
 
-## (void) tray.notify("Some title", "Some message")
+## `(void) tray.notify("Some title", "Some message")`
 Display a notification balloon.
 
-## (void) tray.setMenu(...items)
+## `(void) tray.setMenu(...items)`
 Set the systray menu.
 
-## (Item) tray.item("foo", { ?checked : boolean, ?disabled : boolean, ?bold : boolean, ?action : `function`})
+## `(Item) tray.item("foo", { ?checked : boolean, ?disabled : boolean, ?bold : boolean, ?action : `function`})`
 Create a menu item. If defined, the `action` callback is triggered when the item is selected. 
 
-## (void) parentItem.add(...childrenItems)
+## `(void) parentItem.add(...childrenItems)`
 Create a submenu of childrenItems under parentItem.
 
-## (Item) tray.separator();
+## `(Item) tray.separator()`
 Create an item of type "separator"
 
 
