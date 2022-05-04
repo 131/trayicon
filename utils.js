@@ -53,6 +53,10 @@ function uuid() {
   return crypto.randomBytes(16).toString("hex");
 }
 
+function md5(str) {
+  return crypto.createHash("md5").update(str).digest("hex");
+}
 
 
-module.exports = {escapeXML, attrs, defer, uuid};
+
+module.exports = {escapeXML, attrs, defer, uuid, md5};

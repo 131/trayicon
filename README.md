@@ -25,9 +25,10 @@ Tray.create(function(tray) {
 
 # API
 
-## (Promise <Tray>) tray.create({icon, title, action} [, readyCb])
+## (Promise <Tray>) tray.create({icon, title, action, useTempDir} [, readyCb])
 Create a new Tray instance, return a promise / emit a callback when the trayicon is ready.
 If defined, `action` callback is triggered when double clicking the tray.
+Set `useTempDir` to `true` or `"clean"` to copy executable files to temporary directory (`clean` removes temp files on `tray.kill()`). Allows using the package with [pkg](https://www.npmjs.com/package/pkg).
 
 ## (void) tray.setTitle(tray title)
 Set the systray title.
