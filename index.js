@@ -44,7 +44,7 @@ class Tray extends EventEmitter {
     this.client = null;
 
     this.connected = new Promise(resolve => this.on("connected", resolve));
-    
+
     this._useTempDir = opts.useTempDir;
     this.trayAppPath = TRAYAPP_PATH;
   }
@@ -62,9 +62,9 @@ class Tray extends EventEmitter {
         let computedId = md5(executableName + opts.title);
         let filename = `${executableName}-trayicon-${computedId}.exe`;
         let tmppath = path.join(os.tmpdir(), filename);
-  
+
         tray.trayAppPath = tmppath;
-  
+
         if(fs.existsSync(tmppath)) {
           resolve();
         } else {
@@ -75,7 +75,7 @@ class Tray extends EventEmitter {
           wr.on("close", resolve);
           rd.pipe(wr);
         }
-      })
+      });
     }
 
     tray._connect();
